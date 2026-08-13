@@ -1,0 +1,22 @@
+[
+    {
+        "data": "31/07/2026",
+        "nome": "Brazil",
+        "acao": "Pesquisa simples"
+    },
+    {
+        "data": "03/08/2026",
+        "nome": "Japan",
+        "acao": "Pesquisa simples"
+    },
+    {
+        "data": "13/08/2026",
+        "nome": "brazil",
+        "acao": "Pesquisa simples"
+    },
+    {
+        "data": "13/08/2026",
+        "nome": "japan",
+        "acao": "Comparação"
+    }
+]

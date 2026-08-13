@@ -1,0 +1,130 @@
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Prompt
+
+from dados.favoritos import adicionar_favoritos, remover_favoritos
+from interface import paineis
+from interface import tabelas
+from servicos.pais import pesquisar_pais, comparar_paises
+
+console = Console()
+
+opcoes_menu = [
+    "\n[bold yellow][1][/bold yellow] Pesquisar país",
+    "[bold yellow][2][/bold yellow] Comparar países",
+    "[bold yellow][3][/bold yellow] Países por continente",
+    "[bold yellow][4][/bold yellow] Histórico",
+    "[bold yellow][5][/bold yellow] Favoritos",
+    "[bold yellow][6][/bold yellow] Sair\n",
+    ]
+
+
+def exibir_titulo():
+    titulo = text_titulo()
+    console.print(
+        Panel(
+            titulo,
+            title="🌍 Dashboard Países",
+            subtitle="Dados via REST Countries",
+            border_style="bold cyan",
+            expand=True,
+        )
+    )
+
+
+def text_titulo():
+    from rich.text import Text
+    texto = Text()
+    texto.append("Bem-vindo(a) ao ", style="white")
+    texto.append("Dashboard de Países", style="bold green")
+    texto.append("!\nEscolha uma opção abaixo para continuar.", style="white")
+    return texto
+
+
+def exibir_opcoes():
+    for opc in opcoes_menu:
+        console.print(f"{opc}")
+
+
+def capturar_escolha():
+
+    escolha = Prompt.ask(
+        "[bold cyan]Digite o número da opção desejada[/bold cyan]",
+        choices=["1", "2", "3", "4", "5", "6"],
+        default="6",
+    )
+    return escolha
+
+
+def encaminhar_escolha(escolha: str):
+
+    if escolha == "1":
+        nome_pais = input("Digite o nome do país: ")
+        pais_a = pesquisar_pais(nome_pais)
+        paineis.mostrar_painel_pais(pais_a)
+
+        favoritar_pais = input("deseja colocar este país como favorito[S/N]:").strip().lower()
+
+        if favoritar_pais == "s":
+            adicionar_favoritos(pais_a)
+
+    elif escolha == "2":
+        nome_pais1 = input("Digite o nome do país para comparar: ")
+        nome_pais2 = input("Digite o nome do segundo país: ")
+
+        pais_1, pais_2 = comparar_paises(
+            nome_pais1,
+            nome_pais2
+        )
+
+        tabelas.mostrar_tabela_comparacao(
+            pais_1,
+            pais_2
+        )
+
+    elif escolha == "3":
+        print("esta função ainda nn foi adicionada")
+        #paineis.mostrar_painel_continente(continentes)
+
+    elif escolha == "4":
+        tabelas.mostrar_tabela_historico()
+
+    elif escolha == "5":
+        tabelas.mostrar_tabela_favoritos()
+
+        while True:
+            opcoes_delete = input("deseja revomer algum país dos favoritos[S/N]:").strip().lower()
+
+            if opcoes_delete == "s":
+                nome_pais = input("Digite o nome do país que deseja remover dos favoritos: ").strip().lower()
+
+                if remover_favoritos(nome_pais):
+                    print(f"{nome_pais} removido dos favoritos com sucesso!")
+                else:
+                    print(f"{nome_pais} não encontrado nos favoritos.")
+
+            elif opcoes_delete == "n":
+                break
+
+            else:
+                print("Opção inválida. Digite 'S' para sim ou 'N' para não.")
+
+    elif escolha == "6":
+        console.print("\n[bold red]Encerrando o Dashboard de Países...[/bold red]")
+        return False
+
+    return True
+
+
+def iniciar_menu():
+
+    continuar = True
+    while continuar:
+        console.clear()
+        exibir_titulo()
+        exibir_opcoes()
+        escolha = capturar_escolha()
+        continuar = encaminhar_escolha(escolha)
+
+        if continuar:
+            Prompt.ask("\n[dim]Pressione ENTER para voltar ao menu[/dim]", default="")
